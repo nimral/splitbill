@@ -61,7 +61,7 @@ def settle(people, rates, bills, decimal_places=2):
                 money_spent[person] += amount / len(fw)
 
     # just creating pd.DataFrame from dict
-    tmp = pd.DataFrame(list(zip(*money_spent.items()))).transpose()
+    tmp = pd.DataFrame.from_records(list(money_spent.items()))
     tmp.columns = ["Name", "MoneySpent"]
 
     # create pd.DataFrame with columns "Name", "MoneySpent", "MoneyPaid",
@@ -136,4 +136,5 @@ if __name__ == "__main__":
     df = pd.read_csv(args["file.csv"])
     df["For"] = df["For"].map(str.split)
 
-    print(settle(people, exchange_rates, df, args["decimal_places"]))
+    z = settle(people, exchange_rates, df, args["decimal_places"])
+    print(pd.DataFrame.from_records(z, columns=["Who", "ToWhom", "HowMuch"]))
