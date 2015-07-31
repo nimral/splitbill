@@ -2,7 +2,7 @@ import pandas as pd
 import argparse
 
 
-def settle(people, exchange_rates, filename, decimal_places=2):
+def settle(people, exchange_rates, df, decimal_places=2):
     """Calculate the smallest set of transactions needed to settle debts
 
     For each person we sum the money spent for her and subtract the money she
@@ -21,19 +21,17 @@ def settle(people, exchange_rates, filename, decimal_places=2):
         currency in which debts should be paid. Exchange rate for each currency
         (other than final_currency) that appears in filename should be
         specified.
-    filename: string - name of csv file with accounts. The file should contain
-        columns Name (of the person who paid), What (has been paid), Amount (of
-        money paid), Currency (in which it has been paid; for example "EUR"),
-        For (whom it has been paid; either "All" or space separated names or
-        "AllBut " and space separated names, for example "AllBut Adam David").
+    df: pd.Dataframe - bills. Should have columns Name (of the person who
+        paid), What (has been paid), Amount (of money paid), Currency (in which
+        it has been paid; for example "EUR"), For (whom it has been paid;
+        either ["All"] or list of names or ["AllBut"] + list of names, for
+        example ["AllBut", "Adam", "David"]).
     decimal_places: int - number of decimal places to which the amounts to be
         paid should be rounded. Default 2.
 
-    Returns list of tuples (who:str, whom:str, how_much_should_pay:float)
+    Return list of tuples (who:str, whom:str, how_much_should_pay:float)
     """
 
-
-    df = pd.read_csv(filename)
 
     try:
         df["AmountInCUR"] = df.Currency.map(lambda x: exchange_rates[x]) * df.Amount
@@ -48,15 +46,13 @@ def settle(people, exchange_rates, filename, decimal_places=2):
     money_spent = {}
     for person in people:
         money_spent.setdefault(person, 0)
-        for amount, forwhom in zip(df.AmountInCUR, df.For):
-            fwl = forwhom.split()
-            if fwl[0] == "All":
+        for amount, for_whom in zip(df.AmountInCUR, df.For):
+            if for_whom[0] == "All":
                 money_spent[person] += amount / len(people)
-            elif fwl[0] == "AllBut" and person not in fwl[1:]:
-                money_spent[person] += amount / (len(people) - len(fwl[1:]))
-            elif fwl[0] != "AllBut" and person in fwl:
-                money_spent[person] += amount / len(fwl)
-    print(money_spent)
+            elif for_whom[0] == "AllBut" and person not in for_whom[1:]:
+                money_spent[person] += amount / (len(people) - len(for_whom[1:]))
+            elif for_whom[0] != "AllBut" and person in for_whom:
+                money_spent[person] += amount / len(for_whom)
 
     #just creating pd.Dataframe from dict
     tmp = pd.DataFrame(list(zip(*money_spent.items()))).transpose()
@@ -115,4 +111,8 @@ if __name__ == "__main__":
             
     people = args["people"].split(",")
 
-    print(settle(people, exchange_rates, args["file.csv"], decimal_places=args["decimal_places"]))
+
+    df = pd.read_csv(args["file.csv"])
+    df["For"] = df["For"].map(str.split)
+
+    print(settle(people, exchange_rates, df, decimal_places=args["decimal_places"]))
