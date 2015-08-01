@@ -73,8 +73,8 @@ def settle(people, rates, bills, decimal_places=2):
 
     howto = sums.sort("ShouldPay")
 
-    # list of tuples (who, whom, how_much_should_pay)
-    payments = []
+    # set of tuples (who, whom, how_much_should_pay)
+    payments = set()
 
     # topay - list of lists [how_much_should_pay, "who"]
     topay = [[p, w] for p, w in zip(howto.ShouldPay, howto.Name) if p != 0]
@@ -90,10 +90,10 @@ def settle(people, rates, bills, decimal_places=2):
     while len(topay) > 1:
         pay, who = topay.pop()
         topay[0][0] += pay
-        payments.append((who, topay[0][1], round(pay, decimal_places)))
+        payments.add((who, topay[0][1], round(pay, decimal_places)))
         topay.sort()
 
-    return payments
+    return set(payments)
 
 
 if __name__ == "__main__":
@@ -135,5 +135,5 @@ if __name__ == "__main__":
     df = pd.read_csv(args["file.csv"])
     df["For"] = df["For"].map(str.split)
 
-    z = settle(people, exchange_rates, df, args["decimal_places"])
+    z = list(settle(people, exchange_rates, df, args["decimal_places"]))
     print(pd.DataFrame.from_records(z, columns=["Who", "ToWhom", "HowMuch"]))

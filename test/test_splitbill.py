@@ -21,7 +21,7 @@ class TestSettle(unittest.TestCase):
         df = bills("John,Icecream,15,CZK,David")
         r = settle(["John", "David"], exchange_rates, df)
 
-        self.assertEqual(r, [("David", "John", 15)])
+        self.assertEqual(r, {("David", "John", 15)})
 
 
     def test_mutual_debts(self):
@@ -31,5 +31,40 @@ class TestSettle(unittest.TestCase):
                       David,Kofola,20,CZK,John""")
         r = settle(["John", "David"], exchange_rates, df)
 
-        self.assertEqual(r, [])
+        self.assertEqual(r, set())
+
+    
+    def test_circular_debts(self):
+        exchange_rates = {"CZK": 1}
+
+        df = bills("""John,Item,10,CZK,David
+                      David,Item,10,CZK,Martin
+                      Martin,Item,10,CZK,John""")
                     
+        r = settle(["John", "David", "Martin"], exchange_rates, df)
+
+        self.assertEqual(r, set())
+
+
+    def test_circular_debts_one_bigger(self):
+        exchange_rates = {"CZK": 1}
+
+        df = bills("""John,Item,10,CZK,David
+                      David,Item,10,CZK,Martin
+                      Martin,Item,10,CZK,Adam
+                      Adam,Item,11,CZK,John""")
+                    
+        r = settle(["John", "David", "Martin", "Adam"], exchange_rates, df)
+
+        self.assertEqual(r, {("John", "Adam", 1)})
+
+
+    def test_shared_debt(self):
+        exchange_rates = {"CZK": 1}
+
+        df = bills("""Jan,Ticket,1400,CZK,Matěj Petr""")
+
+        r = settle(["Jan", "Petr", "Matěj"], exchange_rates, df)
+
+        self.assertEqual(r, {("Petr", "Jan", 700), ("Matěj", "Jan", 700)})
+
