@@ -76,9 +76,8 @@ def settle(people, rates, bills, decimal_places=2):
     # list of tuples (who, whom, how_much_should_pay)
     payments = []
 
-    # topay - list of lists ["who", how_much_should_pay]
-    # (we need to make tuples mutable, therefore map them to lists)
-    topay = list(map(list, zip(howto.ShouldPay, howto.Name)))
+    # topay - list of lists [how_much_should_pay, "who"]
+    topay = [[p, w] for p, w in zip(howto.ShouldPay, howto.Name) if p != 0]
 
     # Keep people sorted by the amount of money they should pay.
     # At each step take all the money the last one in the list should pay (it
