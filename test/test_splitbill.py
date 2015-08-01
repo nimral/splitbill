@@ -4,7 +4,7 @@ import pandas as pd
 
 
 def bills(s):
-    records = (x.split(",") for x in s.split("\n"))
+    records = ([y.strip() for y in x.split(",")] for x in s.split("\n"))
     columns = ["Name", "What", "Amount", "Currency", "For"]
     df = pd.DataFrame.from_records(records, columns=columns)
     df["Amount"] = df["Amount"].map(float)
@@ -22,3 +22,14 @@ class TestSettle(unittest.TestCase):
         r = settle(["John", "David"], exchange_rates, df)
 
         self.assertEqual(r, [("David", "John", 15)])
+
+
+    def test_mutual_debts(self):
+        exchange_rates = {"CZK": 1}
+
+        df = bills("""John,Icecream,20,CZK,David
+                      David,Kofola,20,CZK,John""")
+        r = settle(["John", "David"], exchange_rates, df)
+
+        self.assertEqual(r, [])
+                    
