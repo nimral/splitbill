@@ -14,6 +14,15 @@ def bills(s):
     return df
 
 
+def will_get(name, payments):
+    """Calculate how much money will a person 'name' get from payments."""
+
+    r = 0
+    r += sum(p for who, whom, p in payments if whom == name)
+    r -= sum(p for who, whom, p in payments if who == name)
+    return r
+
+
 class TestSettle(unittest.TestCase):
     """Test if everybody gets the money he should."""
 
@@ -130,3 +139,33 @@ class TestSettle(unittest.TestCase):
         r2 = settle(people, exchange_rates, df2)
 
         self.assertEqual(r1, r2)
+
+
+    def test_more_currencies(self):
+        """Test if bills in different currencies are counted right."""
+
+        exchange_rates = {"CZK": 1, "EUR": 30, "USD": 20}
+
+
+        df = bills("""John,Lunch,100,CZK,David
+                      David,Dinner,2,EUR,John
+                      Adam,Breakfast,1,USD,John""")
+
+        r = settle(["John", "David", "Adam"], exchange_rates, df)
+
+        self.assertEqual(will_get("John", r), 20)
+        self.assertEqual(will_get("David", r), -40)
+        self.assertEqual(will_get("Adam", r), 20)
+
+
+    def test_requires_exchange_rate(self):
+        """Does settle raise exception if supplied bill with unknown currency?
+        """
+
+        exchange_rates = {"CZK": 1}
+
+        df = bills("""John,Item,100,CZK,David
+                      David,Item,2,EUR,John""")
+        people = ["John", "David"]
+
+        self.assertRaises(ValueError, settle, people, exchange_rates, df)
