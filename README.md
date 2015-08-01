@@ -50,9 +50,9 @@ The script outputs the transactions our friends should perform to be even:
 Command line options
 --------------------
 
-`-c, --currency`: Currency in which the debts will be settled (default CZK)
-`-x, --exchange-rates`: Exchange rates in the form 'USD:20,EUR:27.09'
-`-p, --people`: Required, list of all the people involved, for example
+* `-c, --currency`: Currency in which the debts will be settled (default CZK)
+* `-x, --exchange-rates`: Exchange rates in the form 'USD:20,EUR:27.09'
+* `-p, --people`: Required, list of all the people involved, for example
     `'Adam,David'`. Spaces in names are not allowed.
-`-d, --decimal_places`: Number of decimal places to which amounts should be
+* `-d, --decimal_places`: Number of decimal places to which amounts should be
     rounded. Default 2.
