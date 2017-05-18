@@ -1,8 +1,7 @@
 SplitBill
 =========
 
-Simple script for calculating the minimum number of payments needed to settle
-all debts among a group of people.
+Simple google sheets macro/python script determining how to settle all debts among n people using at most n-1 payments.
 
 Example
 -------
@@ -11,11 +10,27 @@ Imagine five friends who have taken part in a puzzle hunt. Honza paid the fee,
 Adéla bought stuff to make sandwiches (for four of them, as Tomáš took his own
 food), Martin bought group train ticket for himself, Adéla and Tomáš and
 separate one for Karel, who has discount card. Tomáš got the map for the whole
-team. Then in pub at the finish line Karel paid for Martin's kofola, as he
+team. Then in the pub at the finish line Karel paid for Martin's kofola, as he
 couldn't find his wallet at the moment. Adéla bought the train ticket back for
 four, Karel got his own. Now they are luckily back, relaxing and trying to
 figure out how to make everyone get the money they should get in possibly the
 easiest way.
+
+Google Sheets solution
+----------------------
+
+Let's write all the expenses into a Google Sheet:
+
+![Puzzle hunt expenses](hunt.png)
+
+Now we need to add the macro. Tools -> Script editor -> insert the content of `splitbill.js` and save.
+
+Back to the sheet. Select some cell and insert `=splitbill(A2:E9)`. We get the payments instructions:
+
+![Result](result.png)
+
+Python solution
+---------------
 
 Let's write all the expenses in `hunt.csv` file:
 
