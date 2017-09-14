@@ -90,7 +90,8 @@ def settle(people, rates, bills, decimal_places=2):
     while len(topay) > 1:
         pay, who = topay.pop()
         topay[0][0] += pay
-        payments.add((who, topay[0][1], round(pay, decimal_places)))
+        if pay > 0:
+            payments.add((who, topay[0][1], round(pay, decimal_places)))
         topay.sort()
 
     return set(payments)
