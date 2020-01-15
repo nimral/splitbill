@@ -41,7 +41,7 @@ function append(obj, k, v) {
 function get_exchange_rate(from, to) {
   return JSON.parse(
     UrlFetchApp.fetch(
-      'http://api.fixer.io/latest?base=' + from + '&symbols=' + to
+      'http://data.fixer.io/api/latest?access_key=b6e8822ec070884404992eb189c040c2&base=' + from + '&symbols=' + to
     ).getContentText()
   )["rates"][to];
 }
