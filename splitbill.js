@@ -4,9 +4,9 @@
 // google sheets macro determining how to settle debts among n people with at
 // most n-1 payments
 //
-// Usage: google sheet -> tools -> script editor -> insert code, save
-// back to google sheet -> insert something like =splitbill(A2:E6) or 
-// =splitbill(A2:E6; "USD") into a cell
+// Usage: google sheet -> Extensions -> Apps Script -> insert code, save.
+// Go back to google sheet -> insert something like =splitbill(A2:E6) or 
+// =splitbill(A2:E6; "USD") into a cell.
 
 
 function trim(s) { 
